@@ -1,0 +1,36 @@
+pipeline {
+  agent any
+    
+   stages {
+    stage('CodeCommit checkout') {
+      steps {
+         echo 'Clonning Xceler-ui'
+         git branch: 'anirudhtask-2', url: 'https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/xceler-ui'
+            }
+        }
+    stage('Build Docker Image') {
+            steps {
+                script {
+                    sh """
+                    docker build -t ${xceler-ui}:${j-1} .
+                    docker tag ${xceler-ui}:${j-1} ${979668027692.dkr.ecr.ap-south-1.amazonaws.com/xceler-ui}:j-1
+                    """
+                }
+            }
+        }
+    stage('Push Docker Image') {
+            steps {
+                script {
+                    sh """
+                    echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
+                    docker push ${979668027692.dkr.ecr.ap-south-1.amazonaws.com/xceler-ui}:${j-1}
+                    """
+                }
+            }
+        }
+    
+
+    }
+}
+
+
