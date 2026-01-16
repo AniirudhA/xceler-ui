@@ -1,0 +1,22 @@
+name: xceler-ui-a
+namespace: devops-platform
+
+replicaCount: 1
+
+image:
+  repository: 979668027692.dkr.ecr.ap-south-1.amazonaws.com/xceler-ui
+  tag: a-4
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "250m"
+    memory: "256Mi"
