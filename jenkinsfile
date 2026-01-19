@@ -1,36 +1,84 @@
 pipeline {
-  agent any
-    
-   stages {
-    stage('CodeCommit checkout') {
-      steps {
-         echo 'Clonning Xceler-ui'
-         git branch: 'anirudhtask-2', url: 'https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/xceler-ui'
-            }
-        }
-    stage('Build Docker Image') {
-            steps {
-                script {
-                    sh """
-                    docker build -t ${xceler-ui}:${j-1} .
-                    docker tag ${xceler-ui}:${j-1} ${979668027692.dkr.ecr.ap-south-1.amazonaws.com/xceler-ui}:j-1
-                    """
-                }
-            }
-        }
-    stage('Push Docker Image') {
-            steps {
-                script {
-                    sh """
-                    echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
-                    docker push ${979668027692.dkr.ecr.ap-south-1.amazonaws.com/xceler-ui}:${j-1}
-                    """
-                }
-            }
-        }
-    
+    agent { label 'BACKEND-JENKINS-AGENT' }
 
+    environment {
+        AWS_REGION  = "ap-south-1"
+        AWS_ACCOUNT = "979668027692"
+
+        IMAGE_NAME = "xceler-ui"
+        IMAGE_TAG  = "j-1"
+
+        ECR_REPO = "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
+    }
+
+    stages {
+
+        stage('CodeCommit Checkout') {
+            steps {
+                echo 'Cloning Xceler-ui from CodeCommit'
+                git branch: 'anirudhtask-2',
+                    credentialsId: 'ctrm-codecommit',
+                    url: 'https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/xceler-ui'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image'
+                sh """
+                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                    docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${ECR_REPO}:${IMAGE_TAG}
+                """
+            }
+        }
+
+        stage('Login to ECR') {
+            steps {
+                echo 'Logging into Amazon ECR'
+                withCredentials([
+                    [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']
+                ]) {
+                    sh """
+                        aws ecr get-login-password --region ${AWS_REGION} \
+                        | docker login --username AWS --password-stdin \
+                        ${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                    """
+                }
+            }
+        }
+
+        stage('Push Docker Image to ECR') {
+            steps {
+                echo 'Pushing image to ECR'
+                sh "docker push ${ECR_REPO}:${IMAGE_TAG}"
+            }
+        }
+
+        stage('Fetch kubeconfig from S3') {
+            steps {
+                    sh '''
+                        
+                        aws s3 cp s3://devops-essentials/central/kubeconfig/taomish-central-ctrm-stage-config ~/.kube/config
+                        ls -al
+                        
+                    '''
+                
+            }
+        }
+
+        stage('Deploy using Helm') {
+            steps {
+                withAWS(credentials: 'aws-creds', region: 'ap-south-1') {
+                    sh """
+                    kubectl get pods -n devops-platform
+                    helm upgrade --install xceler-ui-a ./helm/xceler-ui \
+                  --namespace devops-platform \
+                  --create-namespace \
+                  --set image.repository=${ECR_REPO} \
+                  --set image.tag=${IMAGE_TAG}
+                    """
+                    }
+            }
+        }
     }
 }
-
-

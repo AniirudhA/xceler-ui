@@ -1,0 +1,28 @@
+apiVersion: v1
+preferences: {}
+kind: Config
+
+clusters:
+- cluster:
+    server: https://86FD30DFA773B7B42CAA72730DB5A7BB.gr7.ap-south-1.eks.amazonaws.com
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJWXdBRDYxSTJPbmN3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBek1EWXlNRE00TlRoYUZ3MHpOREF6TURReU1EUXpOVGhhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURxTXI1NWVxVGVyYS8vMnhhUWlsR1hTTVNlc2ZZZXVMcEtZNDNsa21FNmpTTUZNWGIzOUgrL3NTU0IKaXY1eVBMeWVEUVM4R0xDamdwYjF2MVJGY09la3lPUHRrVGE4MkI0S256MEh0TllTd091dUg4THRYcnNvYW1IVAoybW9MWDV5c1IvbUtKdjZnbFFsWW10UG9FOVo5TVpHdmc5ZFo3enovQkM4cElsR01ySkZQMlFsQ24zZmZGY0lFCk9VYnMyUGoxWUJoZ2ZaS0s1eFZkUGh0ZGNGc0pHMTZ3L2VnRk5CZ0tiMGNoNno2TDhFTGltb3kzczljL0d1WU4KbTd5bFBWMTUwejhNNW5kRjdWemtoTkV4ZUpEMHlJdk12VHVnWjdhSU1sTjRrZjMreDQvR0JCRmt5eUN4czQ3cwpicGx4Qkh3WW1ZVjM4cTNja0pVeGRVNjZQN3J6QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJSOXhpUk1mbjhyUTdWMGVjN2l2SktXenBQSzJEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQkJ4S3ZobE9CWgptM1FEdnlYdVFXOEZKZ3UraW1meUViMHU5MEJaZjhwd0M5OC91NEZ2UHl3bTY2WUI5SEowVUJUS3lVN1pidVpFCnY5YlZrNURlZnRiNzFzSWtmZ1N4ell2cmIwamFJeVFHa2kwN2p4Mm1SN0FxcFppQU55cGFoSm94ZmRKaG5nQmEKeSs2eVNHTlNjR0hoT1RFb0YyWmZRNzlMTnpZWVd5V242blZkYlgvVjFNbVhZb0VJdWx4S3JEZGx4VTJTTWkvNQpXWk1JaXE1RzhNWEl2c1oySjhWOWxvclRoT2RNYUNVaExaRTE0aXQzVjYzOHluajJTWlpPcis0czgyd3NiL3NzCmtKbFVjckprcWxBNFFEcFZ1TnZjZUhHNEprS21MN2JHZnRoKzgzRkh2WHlYdkZoZEhLWVBDZWwyUGQwK3FyMisKRlBBUDlpVCtiMkFGCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+  name: eks_taomish-central-ctrm-stage
+
+contexts:
+- context:
+    cluster: eks_taomish-central-ctrm-stage
+    user: eks_taomish-central-ctrm-stage
+  name: eks_taomish-central-ctrm-stage
+
+current-context: eks_taomish-central-ctrm-stage
+
+users:
+- name: eks_taomish-central-ctrm-stage
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: aws-iam-authenticator
+      args:
+        - "token"
+        - "-i"
+        - "taomish-central-ctrm-stage"
