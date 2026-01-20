@@ -1,5 +1,5 @@
 name: xceler-ui-a
-namespace: devops-platform
+namespace: devops-platform-2
 
 replicaCount: 1
 
