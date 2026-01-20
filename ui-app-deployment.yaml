@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: xceler-ui
+  namespace: devops-platform-2
+spec:
+  project: default
+  source:
+    repoURL: https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/xceler-ui
+    targetRevision: anirudhtask-2
+    path: .
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: devops-platform-2
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    
