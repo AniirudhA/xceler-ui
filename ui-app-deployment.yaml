@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/AniirudhA/xceler-ui
+    repoURL: https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/xceler-ui
     targetRevision: anirudhtask-2
     path: .
   destination:
